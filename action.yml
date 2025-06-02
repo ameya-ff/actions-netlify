@@ -50,9 +50,18 @@ inputs:
   fails-without-credentials:
     description: Fails if no credentials provided
     required: false
+  owner:
+    description: GitHub owner
+    required: false
+  repo:
+    description: GitHub repo
+    required: false
+  sha:
+    description: Commit SHA
+    required: false
 outputs:
-  deploy-url:
-    description: Deploy URL
+  # deploy-url:
+  #   description: Deploy URL
 runs:
   using: 'node20'
   main: 'dist/index.js'
