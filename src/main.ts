@@ -72,7 +72,8 @@ export async function run(inputs: Inputs): Promise<void> {
       if (inputs.failsWithoutCredentials()) {
         throw new Error(errorMessage)
       }
-      process.stderr.write(errorMessage)
+      // process.stderr.write(errorMessage)
+      process.stderr.write('AMEYA: errorMessage')
       return
     }
     const dir = inputs.publishDir()
@@ -116,13 +117,14 @@ export async function run(inputs: Inputs): Promise<void> {
       ? `🎉 Published on ${deploy.deploy.ssl_url} as production\n🚀 Deployed on ${deploy.deploy.deploy_ssl_url}`
       : `🚀 Deployed on ${deploy.deploy.deploy_ssl_url}`
     // Print the URL
-    process.stdout.write(`${message}\n`)
+    // AMEYA: Silence the log
+    // process.stdout.write(`${message}\n`)
 
     // Set the deploy URL to outputs for GitHub Actions
     const deployUrl = productionDeploy
       ? deploy.deploy.ssl_url
       : deploy.deploy.deploy_ssl_url
-    core.setOutput('deploy-url', deployUrl)
+    // AMEYA // core.setOutput('deploy-url', deployUrl)
 
     // Get GitHub token
     const githubToken = inputs.githubToken()
@@ -136,9 +138,9 @@ export async function run(inputs: Inputs): Promise<void> {
 
     if (enableCommitComment) {
       const commitCommentParams = {
-        owner: context.repo.owner,
-        repo: context.repo.repo,
-        commit_sha: context.sha,
+        owner: inputs.owner() ?? context.repo.owner,
+        repo: inputs.repo() ?? context.repo.repo,
+        commit_sha: inputs.sha() ?? context.sha,
         body: markdownComment
       }
       // TODO: Remove try
@@ -212,12 +214,12 @@ export async function run(inputs: Inputs): Promise<void> {
         // (base: https://github.community/t/github-sha-isnt-the-value-expected/17903/2)
         const sha = context.payload.pull_request?.head.sha ?? context.sha
         await githubClient.rest.repos.createCommitStatus({
-          owner: context.repo.owner,
-          repo: context.repo.repo,
+          owner: inputs.owner() ?? context.repo.owner,
+          repo: inputs.repo() ?? context.repo.repo,
           context: 'Netlify',
           description: 'Netlify deployment',
           state: 'success',
-          sha,
+          sha: inputs.sha() ?? sha,
           target_url: deployUrl
         })
       } catch (err) {
