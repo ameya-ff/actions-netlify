@@ -72,7 +72,8 @@ export async function run(inputs: Inputs): Promise<void> {
       if (inputs.failsWithoutCredentials()) {
         throw new Error(errorMessage)
       }
-      process.stderr.write(errorMessage)
+      // process.stderr.write(errorMessage)
+      process.stderr.write('AMEYA: errorMessage')
       return
     }
     const dir = inputs.publishDir()
