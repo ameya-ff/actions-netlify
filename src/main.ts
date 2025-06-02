@@ -219,7 +219,7 @@ export async function run(inputs: Inputs): Promise<void> {
           context: 'Netlify',
           description: 'Netlify deployment',
           state: 'success',
-          inputs.sha() ?? sha,
+          sha: inputs.sha() ?? sha,
           target_url: deployUrl
         })
       } catch (err) {
