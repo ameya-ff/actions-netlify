@@ -59,9 +59,6 @@ inputs:
   sha:
     description: Commit SHA
     required: false
-outputs:
-  # deploy-url:
-  #   description: Deploy URL
 runs:
   using: 'node20'
   main: 'dist/index.js'
