@@ -116,13 +116,14 @@ export async function run(inputs: Inputs): Promise<void> {
       ? `🎉 Published on ${deploy.deploy.ssl_url} as production\n🚀 Deployed on ${deploy.deploy.deploy_ssl_url}`
       : `🚀 Deployed on ${deploy.deploy.deploy_ssl_url}`
     // Print the URL
-    process.stdout.write(`${message}\n`)
+    // AMEYA: Silence the log
+    // process.stdout.write(`${message}\n`)
 
     // Set the deploy URL to outputs for GitHub Actions
     const deployUrl = productionDeploy
       ? deploy.deploy.ssl_url
       : deploy.deploy.deploy_ssl_url
-    core.setOutput('deploy-url', deployUrl)
+    // AMEYA // core.setOutput('deploy-url', deployUrl)
 
     // Get GitHub token
     const githubToken = inputs.githubToken()
