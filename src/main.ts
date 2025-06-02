@@ -137,9 +137,9 @@ export async function run(inputs: Inputs): Promise<void> {
 
     if (enableCommitComment) {
       const commitCommentParams = {
-        owner: context.repo.owner,
-        repo: context.repo.repo,
-        commit_sha: context.sha,
+        owner: inputs.owner() ?? context.repo.owner,
+        repo: inputs.repo() ?? context.repo.repo,
+        commit_sha: inputs.sha() ?? context.sha,
         body: markdownComment
       }
       // TODO: Remove try
@@ -213,12 +213,12 @@ export async function run(inputs: Inputs): Promise<void> {
         // (base: https://github.community/t/github-sha-isnt-the-value-expected/17903/2)
         const sha = context.payload.pull_request?.head.sha ?? context.sha
         await githubClient.rest.repos.createCommitStatus({
-          owner: context.repo.owner,
-          repo: context.repo.repo,
+          owner: inputs.owner() ?? context.repo.owner,
+          repo: inputs.repo() ?? context.repo.repo,
           context: 'Netlify',
           description: 'Netlify deployment',
           state: 'success',
-          sha,
+          inputs.sha() ?? sha,
           target_url: deployUrl
         })
       } catch (err) {
