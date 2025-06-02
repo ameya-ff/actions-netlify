@@ -18,6 +18,9 @@ export interface Inputs {
   githubDeploymentEnvironment(): string | undefined
   githubDeploymentDescription(): string | undefined
   failsWithoutCredentials(): boolean
+  owner(): string
+  repo(): string
+  sha(): string
 }
 
 export const defaultInputs: Inputs = {
@@ -77,5 +80,14 @@ export const defaultInputs: Inputs = {
   failsWithoutCredentials(): boolean {
     // Default: false
     return core.getInput('fails-without-credentials') === 'true'
-  }
+  },
+  owner() {
+    return core.getInput('owner')
+  },
+  repo() {
+    return core.getInput('repo')
+  },
+  sha() {
+    return core.getInput('sha')
+  },
 }
