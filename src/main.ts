@@ -16,12 +16,15 @@ function getCommentIdentifier(siteId: string): string {
 
 async function findIssueComment(
   githubClient: InstanceType<typeof GitHub>,
-  siteId: string
+  siteId: string,
+  owner: string,
+  repo: string,
+  issueNumber: number
 ): Promise<number | undefined> {
   const listCommentsRes = await githubClient.rest.issues.listComments({
-    owner: context.issue.owner,
-    repo: context.issue.repo,
-    issue_number: context.issue.number
+    owner,
+    repo,
+    issue_number: issueNumber
   })
 
   const comments = listCommentsRes.data
@@ -155,29 +158,32 @@ export async function run(inputs: Inputs): Promise<void> {
     }
 
     // If it is a pull request and enable comment on pull request
-    if (context.issue.number !== undefined) {
+    if (inputs.pullRequestNumber() !== undefined || context.issue.number !== undefined) {
       if (enablePullRequestComment) {
         let commentId: number | undefined = undefined
         if (overwritesPullRequestComment) {
           // Find issue comment
-          commentId = await findIssueComment(githubClient, siteId)
+          commentId = await findIssueComment(githubClient, siteId, 
+            inputs.owner() ?? context.repo.owner, 
+            inputs.repo() ?? context.repo.repo, 
+            inputs.pullRequestNumber() ?? context.issue.number)
         }
 
         // NOTE: if not overwrite, commentId is always undefined
         if (commentId !== undefined) {
           // Update comment of the deploy URL
           await githubClient.rest.issues.updateComment({
-            owner: context.issue.owner,
-            repo: context.issue.repo,
+            owner: inputs.owner() ?? context.repo.owner,
+            repo: inputs.repo() ?? context.repo.repo,
             comment_id: commentId,
             body: markdownComment
           })
         } else {
           // Comment the deploy URL
           await githubClient.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
+            issue_number: inputs.pullRequestNumber() ?? context.issue.number,
+            owner: inputs.owner() ?? context.repo.owner,
+            repo: inputs.repo() ?? context.repo.repo,
             body: markdownComment
           })
         }
