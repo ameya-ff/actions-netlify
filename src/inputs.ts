@@ -21,6 +21,7 @@ export interface Inputs {
   owner(): string | undefined
   repo(): string | undefined
   sha(): string | undefined
+  pullRequestNumber(): number | undefined
 }
 
 export const defaultInputs: Inputs = {
@@ -64,9 +65,6 @@ export const defaultInputs: Inputs = {
   netlifyConfigPath() {
     return core.getInput('netlify-config-path') || undefined
   },
-  alias() {
-    return core.getInput('alias') || undefined
-  },
   enableGithubDeployment() {
     // Default: true
     return (core.getInput('enable-github-deployment') || 'true') === 'true'
@@ -89,5 +87,11 @@ export const defaultInputs: Inputs = {
   },
   sha(): string | undefined {
     return core.getInput('sha') || undefined
+  },
+  pullRequestNumber(): number | undefined {
+    return core.getInput('pull-request-number') ? parseInt(core.getInput('pull-request-number')!) : undefined
+  },
+  alias() {
+    return core.getInput('alias') || this.pullRequestNumber() ? `pr-${this.pullRequestNumber()}` : undefined
   },
 }
